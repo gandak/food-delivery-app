@@ -15,7 +15,7 @@ const AuthImage = (props: Props) => {
         width={0}
         height={0}
         sizes="100vw"
-        style={{ width: "auto", height: "100vh" }}
+        style={{ width: "auto", height: "100vh", padding: "40px" }}
       />
     </div>
   );
