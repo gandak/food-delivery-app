@@ -13,7 +13,7 @@ export const CategoriesToggle = () => {
             aria-label={category.name}
             className="rounded-2xl hover:bg-[#EF4444] px-4 h-[36px]"
           >
-            <p>{category.name}</p>
+            <p className="text-[18px]">{category.name}</p>
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
