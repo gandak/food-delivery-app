@@ -11,7 +11,7 @@ export const CategoriesToggle = () => {
             key={category.id}
             value={category.name}
             aria-label={category.name}
-            className="rounded-2xl hover:bg-[#EF4444] px-4 h-[36px]"
+            className="rounded-2xl hover:bg-[#EF4444] px-4 h-[36px] text-nowrap"
           >
             <p className="text-[18px]">{category.name}</p>
           </ToggleGroupItem>

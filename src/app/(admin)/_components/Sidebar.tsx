@@ -1,17 +1,16 @@
+"use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Bold,
-  Italic,
-  LayoutDashboard,
-  Settings,
-  Truck,
-  Underline,
-} from "lucide-react";
 import Image from "next/image";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useRouter } from "next/navigation";
 
 export const Sidebar = () => {
+  const router = useRouter();
+
+  const handleClick = (value: string) => {
+    router.push(`/${value}`);
+  };
+
   return (
     <div className="w-[205px] flex gap-8 flex-col bg-white h-screen items-center pt-12">
       <div className="flex items-center">
@@ -24,21 +23,25 @@ export const Sidebar = () => {
         </div>
       </div>
       <div>
-        <ToggleGroup type="single" className="flex flex-col gap-6">
+        <ToggleGroup
+          type="single"
+          className="flex flex-col gap-6"
+          onValueChange={handleClick}
+        >
           <ToggleGroupItem
-            value="bold"
+            value="foodMenu"
             className="w-[165px] h-[40px] rounded-3xl"
           >
             <p>Food menu</p>
           </ToggleGroupItem>
           <ToggleGroupItem
-            value="italic"
+            value="orders"
             className="w-[165px] h-[40px] rounded-3xl"
           >
             <p>Orders</p>
           </ToggleGroupItem>
           <ToggleGroupItem
-            value={""}
+            value="settings"
             className="w-[165px] h-[40px] rounded-3xl"
           >
             <p>Settings</p>
