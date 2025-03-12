@@ -40,6 +40,7 @@ const Page = () => {
   const [editCategoryName, setEditCategoryName] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [saveId, setSaveId] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const getCategories = async () => {
     const data = await fetch("http://localhost:4000/food-category");
@@ -118,14 +119,22 @@ const Page = () => {
     setCatValue(value);
   };
 
-  const handleClickEdit = (id: string) => {
-    setEditCategoryName(true);
+  const handleClickAdd = () => {
+    setIsDialogOpen(true);
+    setIsEdit(false);
+    setCatValue("");
+  };
+
+  const handleClickEdit = (id: string, categoryName: string) => {
+    setIsDialogOpen(true);
+    // setEditCategoryName(true);
+    setCatValue(categoryName);
     setIsEdit(true);
     setSaveId(id);
   };
 
-  const closeDiolog = () => {
-    setEditCategoryName(false);
+  const closeDialog = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -165,7 +174,9 @@ const Page = () => {
                 </ContextMenuTrigger>
                 <ContextMenuContent>
                   <ContextMenuItem
-                    onClick={() => handleClickEdit(category._id)}
+                    onClick={() =>
+                      handleClickEdit(category._id, category.categoryName)
+                    }
                   >
                     Edit
                   </ContextMenuItem>
@@ -176,18 +187,19 @@ const Page = () => {
               </ContextMenu>
             ))}
 
-            <Dialog open={editCategoryName} onOpenChange={closeDiolog}>
-              <DialogTrigger asChild className="">
-                <div className="cursor-pointer bg-[#EF4444]  w-[36px] h-[36px] rounded-full flex justify-center items-center ">
-                  <Plus color="#ffffff" />
-                </div>
-              </DialogTrigger>
+            <div
+              className="cursor-pointer bg-[#EF4444] w-[36px] h-[36px] rounded-full flex justify-center items-center"
+              onClick={handleClickAdd} // Open dialog manually
+            >
+              <Plus color="#ffffff" />
+            </div>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>
                     {isEdit ? "Edit category name" : "Add new category"}
                   </DialogTitle>
-                  <DialogDescription></DialogDescription>
                 </DialogHeader>
                 <div className="gap-4 py-4">
                   <div className="flex flex-col gap-2">
@@ -196,7 +208,8 @@ const Page = () => {
                     </Label>
                     <Input
                       id="name"
-                      onChange={handleInputChange}
+                      value={catValue} // Make sure input value is controlled
+                      onChange={(e) => setCatValue(e.target.value)}
                       className="col-span-3"
                       placeholder="Placeholder"
                     />
@@ -205,7 +218,7 @@ const Page = () => {
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button type="submit" className="px-4" onClick={submitCat}>
-                      <p>Add category</p>
+                      <p>{isEdit ? "Save Changes" : "Add category"}</p>
                     </Button>
                   </DialogClose>
                 </DialogFooter>
