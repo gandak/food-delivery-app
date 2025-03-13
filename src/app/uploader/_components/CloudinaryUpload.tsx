@@ -1,24 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Divide } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 
 export const CloudinaryUpload = () => {
-  const [file, setFile] = useState(null);
-  const [image, setImage] = useState(null);
-
   const PRESET_NAME = "food-delivery";
   const CLOUDINARY_NAME = "dagcnqvlx";
 
-  const handleImage: React.ChangeEventHandler<HTMLInputElement> = (e: any) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFile(file);
-    }
-  };
-
-  const handleUpload = async () => {
+  const imageUpload = async (file: File | null) => {
     if (!file) {
       alert("Please select a file");
     }
@@ -30,13 +19,14 @@ export const CloudinaryUpload = () => {
 
     try {
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_NAME}/upload`,
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_NAME}/image/upload`,
         {
           method: "POST",
           body: formData,
         }
       );
       const data = await res.json();
+
       setImage(data.secure_url);
     } catch (err) {
       console.log(err);
@@ -46,8 +36,8 @@ export const CloudinaryUpload = () => {
   return (
     <div className="flex flex-col gap-4 items-center">
       <div>
-        <input type="file" onChange={handleImage} />
-        <Button onClick={handleUpload}>Upload</Button>
+        <input type="file" onChange={handleChange} />
+        <Button onClick={imageUpload}>Upload</Button>
       </div>
       {image && (
         <div>
