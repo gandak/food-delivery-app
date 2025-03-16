@@ -26,34 +26,19 @@ import { CloudinaryUpload } from "@/app/uploader/_components/CloudinaryUpload";
 
 const formSchema = z.object({
   name: z.string().min(3, {
-    message: "must be at least 3 characters.",
+    message: "Must be at least 3 characters.",
   }),
   price: z.string().min(1, {
-    message: "must be at least 3 characters.",
+    message: "Must be at least 1 character.",
   }),
   ingredients: z.string().min(3, {
-    message: "must be at least 5 characters.",
+    message: "Must be at least 3 characters.",
   }),
+  image: z.string().url().optional(), // Ensure image is a valid URL
 });
 
-type Food = {
-  foodName: string;
-  price: number;
-  image: string;
-  ingredients: string;
-  category: {};
-};
-
-type FoodValue = {
-  foodName: string;
-  price: number;
-  image: string;
-  ingredients: string;
-};
-
 export const FoodAdd = () => {
-  const [file, setFile] = useState<File | null>();
-  const [image, setImage] = useState<string>();
+  const [image, setImage] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,26 +46,47 @@ export const FoodAdd = () => {
       name: "",
       price: "",
       ingredients: "",
+      image: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const onImageUpload = (imageUrl: string) => {
+    setImage(imageUrl);
+    form.setValue("image", imageUrl);
 
-  const [food, setFood] = useState<Food>();
-  const [foodValues, setFoodValues] = useState();
+    console.log(image);
 
-  const addFood = async () => {};
+    const addCategory = async (categoryName: string) => {
+      const data = await fetch("http://localhost:4000/food-category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ categoryName: `${categoryName}` }),
+      });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files![0];
-
-    setFile(file);
-
-    const tempImageUrl = URL.createObjectURL(file);
-    setImage(tempImageUrl);
+      if (data.status == 200) {
+        alert("Төрөл амжилттай нэмлээ");
+      } else {
+        const jsonData = await data.json();
+        if (jsonData.error.errorResponse.code == 11000)
+          alert("Төрлийн нэр давхцаж байна ");
+        else {
+          alert("Төрөл нэмэхэд алдаа гарлаа");
+        }
+      }
+      getCategories();
+    };
   };
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!values.image) {
+      alert("Please upload an image.");
+      return;
+    }
+    console.log("Submitted Data:", values);
+    // Add API call to save food item
+  }
 
   return (
     <Dialog>
@@ -89,34 +95,24 @@ export const FoodAdd = () => {
           <div className="bg-[#EF4444] h-[40px] w-[40px] rounded-3xl flex justify-center items-center ">
             <Plus color="#ffffff" />
           </div>
-          <div className="text-wrap w-[120px]">Add new Dish to Salads</div>
+          <div className="text-wrap w-[120px]">Add new Dish</div>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogTitle>
-          <h2>Add new Dish to Appetizers</h2>
-        </DialogTitle>
+        <DialogTitle>Add new Dish</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="flex gap-4">
-              {" "}
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-4">
-                    <div className="flex gap-2">
-                      {" "}
-                      <div className="flex flex-col gap-2">
-                        <FormLabel>
-                          <p>Food name</p>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter food name" {...field} />
-                        </FormControl>
-                        <FormMessage className="text-[11px]" />
-                      </div>
-                    </div>
+                    <FormLabel>Food name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter food name" {...field} />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -125,15 +121,11 @@ export const FoodAdd = () => {
                 name="price"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                      <FormLabel>
-                        <p>Food price</p>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter price" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-[11px]" />
-                    </div>
+                    <FormLabel>Food price</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter price" {...field} />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -144,21 +136,25 @@ export const FoodAdd = () => {
               name="ingredients"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2">
-                    <FormLabel>
-                      <p>Ingredients</p>
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Enter ingredients" {...field} />
-                    </FormControl>
-                    <FormMessage className="text-[11px]" />
-                  </div>
+                  <FormLabel>Ingredients</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Enter ingredients" {...field} />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-            <CloudinaryUpload />
 
-            <Button type="submit" className="px-4 " onClick={addFood}>
+            <CloudinaryUpload onUpload={onImageUpload} />
+            {image && (
+              <img
+                src={image}
+                alt="Uploaded"
+                className="w-32 h-32 rounded-md"
+              />
+            )}
+
+            <Button type="submit" className="px-4">
               Submit
             </Button>
           </form>
