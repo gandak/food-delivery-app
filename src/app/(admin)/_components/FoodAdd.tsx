@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import { CloudinaryUpload } from "@/app/uploader/_components/CloudinaryUpload";
+import { imageUpload } from "@/util/imageUpload";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -39,6 +40,7 @@ const formSchema = z.object({
 
 export const FoodAdd = () => {
   const [image, setImage] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,37 +57,46 @@ export const FoodAdd = () => {
     form.setValue("image", imageUrl);
 
     console.log(image);
-
-    const addCategory = async (categoryName: string) => {
-      const data = await fetch("http://localhost:4000/food-category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ categoryName: `${categoryName}` }),
-      });
-
-      if (data.status == 200) {
-        alert("Төрөл амжилттай нэмлээ");
-      } else {
-        const jsonData = await data.json();
-        if (jsonData.error.errorResponse.code == 11000)
-          alert("Төрлийн нэр давхцаж байна ");
-        else {
-          alert("Төрөл нэмэхэд алдаа гарлаа");
-        }
-      }
-      getCategories();
-    };
   };
 
+  // const addFood = async (categoryName: string) => {
+  //   if (data.status == 200) {
+  //     alert("Төрөл амжилттай нэмлээ");
+  //   } else {
+  //     const jsonData = await data.json();
+  //     if (jsonData.error.errorResponse.code == 11000)
+  //       alert("Төрлийн нэр давхцаж байна ");
+  //     else {
+  //       alert("Төрөл нэмэхэд алдаа гарлаа");
+  //     }
+  //   }
+  //   getCategories();
+  // };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const imageUrl = await imageUpload();
     if (!values.image) {
       alert("Please upload an image.");
       return;
     }
+
+    const data = await fetch("http://localhost:4000/food", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        foodName: `${values.name}`,
+        price: `${values.price}`,
+        image: `${values.image}`,
+        ingredients: `${values.ingredients}`,
+        category: `67d237f18605c41e382497f3`,
+      }),
+    });
+
     console.log("Submitted Data:", values);
-    // Add API call to save food item
+    const jsonData = await data.json();
+    console.log("status", jsonData);
   }
 
   return (
@@ -145,7 +156,7 @@ export const FoodAdd = () => {
               )}
             />
 
-            <CloudinaryUpload onUpload={onImageUpload} />
+            <CloudinaryUpload onUpload={onImageUpload} setFile={setFile} file={file} />
             {image && (
               <img
                 src={image}
