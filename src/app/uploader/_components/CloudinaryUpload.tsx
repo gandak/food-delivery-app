@@ -6,9 +6,9 @@ import React, { useState } from "react";
 
 export const CloudinaryUpload: React.FC<{
   onUpload: (url: string) => void;
-  setFile: any;
-  file: File;
-}> = async ({ onUpload, setFile }) => {
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+  file: File | null;
+}> = ({ onUpload, setFile }) => {
   // const [loading, setLoading] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

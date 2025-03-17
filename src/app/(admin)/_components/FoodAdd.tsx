@@ -74,29 +74,45 @@ export const FoodAdd = () => {
   // };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const imageUrl = await imageUpload();
-    if (!values.image) {
+    if (!file) {
       alert("Please upload an image.");
       return;
     }
 
-    const data = await fetch("http://localhost:4000/food", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        foodName: `${values.name}`,
-        price: `${values.price}`,
-        image: `${values.image}`,
-        ingredients: `${values.ingredients}`,
-        category: `67d237f18605c41e382497f3`,
-      }),
-    });
+    try {
+      const imageUrl = await imageUpload(file);
+      if (!imageUrl) {
+        alert("Image upload failed.");
+        return;
+      }
 
-    console.log("Submitted Data:", values);
-    const jsonData = await data.json();
-    console.log("status", jsonData);
+      values.image = imageUrl; // Update form values with uploaded image URL
+
+      const response = await fetch("http://localhost:4000/food", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          foodName: values.name,
+          price: values.price,
+          image: values.image,
+          ingredients: values.ingredients,
+          category: "67d237f18605c41e382497f3",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit food data");
+      }
+
+      const jsonData = await response.json();
+      console.log("Server Response:", jsonData);
+      alert("Food added successfully!");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while adding food.");
+    }
   }
 
   return (
@@ -156,7 +172,11 @@ export const FoodAdd = () => {
               )}
             />
 
-            <CloudinaryUpload onUpload={onImageUpload} setFile={setFile} file={file} />
+            <CloudinaryUpload
+              onUpload={onImageUpload}
+              setFile={setFile}
+              file={file}
+            />
             {image && (
               <img
                 src={image}

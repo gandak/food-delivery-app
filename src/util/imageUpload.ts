@@ -1,9 +1,6 @@
 "use client";
 import { useState } from "react";
 
-const PRESET_NAME = "food-delivery";
-const CLOUDINARY_NAME = "dagcnqvlx";
-
 export const imageUpload = async (file: File | null) => {
   //   const [imageUrl, setImage] = useState<string | null>(null);
 
@@ -11,6 +8,9 @@ export const imageUpload = async (file: File | null) => {
     alert("Please select a file");
     return;
   }
+
+  const PRESET_NAME = "food-delivery";
+  const CLOUDINARY_NAME = "dagcnqvlx";
 
   //   setLoading(true);
   const formData = new FormData();
