@@ -19,9 +19,13 @@ import { Plus } from "lucide-react";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
+import { getFoods } from "@/util/getFoods";
+import { Foods } from "@/util/database";
 
 type categoryType = {
-  categoryName: string;
+  category: {
+    categoryName: string;
+  };
   createdAt: Date;
   updatedAt: Date;
   _id: string;
@@ -33,6 +37,8 @@ export const CatsHeader = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [saveId, setSaveId] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [foods, SetFoods] = useState<[]>([]);
+  const [foodCount, setFoodCount] = useState<{ [key: string]: number }>({});
 
   const getCategories = async () => {
     const data = await fetch("http://localhost:4000/food-category");
@@ -42,6 +48,11 @@ export const CatsHeader = () => {
 
   useEffect(() => {
     getCategories();
+    const getAllFoods = async () => {
+      const allFoods = await getFoods();
+      SetFoods(allFoods.allFood);
+    };
+    getAllFoods();
   }, []);
 
   const addCategory = async (categoryName: string) => {
@@ -118,6 +129,28 @@ export const CatsHeader = () => {
     setSaveId(id);
   };
 
+  console.log(foods);
+
+  const countFoodsInCategories = () => {
+    const count: { [key: string]: number } = {};
+
+    categories?.map((category: categoryType) => {
+      count[category._id] = foods.filter(
+        (food: Foods) => food.category._id === category._id
+      ).length;
+    });
+
+    setFoodCount(count);
+  };
+
+  useEffect(() => {
+    if (categories?.length && foods?.length) {
+      countFoodsInCategories();
+    }
+  }, [categories, foods]);
+
+  console.log(foodCount);
+
   return (
     <div className="bg-white p-6 rounded-lg ">
       <h2 className="text-20px font-bold">Dishes category</h2>
@@ -137,14 +170,14 @@ export const CatsHeader = () => {
           </ToggleGroupItem>
 
           {categories?.map((category: categoryType, index: number) => (
-            <ContextMenu>
+            <ContextMenu key={index}>
               <ContextMenuTrigger>
                 <ToggleGroupItem
                   key={index}
                   value={category.categoryName}
                   className="rounded-3xl mb-2 "
                 >
-                  <div className="text-nowrap px-4 flex gap-2">
+                  <div key={index} className="text-nowrap px-4 flex gap-2">
                     {category.categoryName}{" "}
                     <div className="bg-black rounded-3xl h-[20px] flex items-center">
                       <p className="text-white px-3 text-[12px]">5</p>

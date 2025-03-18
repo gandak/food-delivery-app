@@ -9,7 +9,13 @@ export type Foods = {
   price: number;
   ingredients: string;
   image: string;
-  category: string;
+  category: {
+    categoyName: string;
+    createdAt: Date;
+    updatedAt: Date;
+    __v: number;
+    _id: string;
+  };
   updatedAt: Date;
   createdAt: Date;
   __v: number;
