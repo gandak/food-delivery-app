@@ -35,10 +35,16 @@ const formSchema = z.object({
   ingredients: z.string().min(3, {
     message: "Must be at least 3 characters.",
   }),
-  image: z.string().url().optional(), // Ensure image is a valid URL
+  image: z.string(),
 });
 
-export const FoodAdd = () => {
+export const FoodAdd = ({
+  categoryName,
+  id,
+}: {
+  categoryName: string;
+  id: string;
+}) => {
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
@@ -52,41 +58,22 @@ export const FoodAdd = () => {
     },
   });
 
-  const onImageUpload = (imageUrl: string) => {
-    setImage(imageUrl);
-    form.setValue("image", imageUrl);
-
-    console.log(image);
-  };
-
-  // const addFood = async (categoryName: string) => {
-  //   if (data.status == 200) {
-  //     alert("Төрөл амжилттай нэмлээ");
-  //   } else {
-  //     const jsonData = await data.json();
-  //     if (jsonData.error.errorResponse.code == 11000)
-  //       alert("Төрлийн нэр давхцаж байна ");
-  //     else {
-  //       alert("Төрөл нэмэхэд алдаа гарлаа");
-  //     }
-  //   }
-  //   getCategories();
-  // };
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!file) {
-      alert("Please upload an image.");
+      alert("Зурагаа сонгоогүй байна");
       return;
     }
 
     try {
       const imageUrl = await imageUpload(file);
+
       if (!imageUrl) {
         alert("Image upload failed.");
         return;
       }
 
-      values.image = imageUrl; // Update form values with uploaded image URL
+      setImage(imageUrl);
+      values.image = imageUrl;
 
       const response = await fetch("http://localhost:4000/food", {
         method: "POST",
@@ -98,13 +85,9 @@ export const FoodAdd = () => {
           price: values.price,
           image: values.image,
           ingredients: values.ingredients,
-          category: "67d237f18605c41e382497f3",
+          category: id,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit food data");
-      }
 
       const jsonData = await response.json();
       console.log("Server Response:", jsonData);
@@ -118,15 +101,17 @@ export const FoodAdd = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-white text-black w-[397px] h-[342px] rounded-3xl border-2 border-[#EF4444] flex flex-col items-center justify-center">
+        <Button className="bg-white text-black w-[397px] h-[342px] rounded-3xl border-2 border-dashed border-spacing border-[#EF4444] flex flex-col items-center justify-center">
           <div className="bg-[#EF4444] h-[40px] w-[40px] rounded-3xl flex justify-center items-center ">
             <Plus color="#ffffff" />
           </div>
-          <div className="text-wrap w-[120px]">Add new Dish</div>
+          <div className="text-wrap w-[120px]">
+            Add new Dish to {categoryName}
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogTitle>Add new Dish</DialogTitle>
+        <DialogTitle>Add new Dish to {categoryName}</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="flex gap-4">
@@ -172,17 +157,22 @@ export const FoodAdd = () => {
               )}
             />
 
-            <CloudinaryUpload
-              onUpload={onImageUpload}
-              setFile={setFile}
-              file={file}
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem className="flex flex-col gap-4">
+                  <FormLabel></FormLabel>
+                  <FormControl>
+                    <CloudinaryUpload setFile={setFile} setImage={setImage} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+
             {image && (
-              <img
-                src={image}
-                alt="Uploaded"
-                className="w-32 h-32 rounded-md"
-              />
+              <img src={image} alt="preview" className="w-64 rounded-md" />
             )}
 
             <Button type="submit" className="px-4">

@@ -4,11 +4,15 @@ type Category = {
 };
 
 export type Foods = {
-  id: number;
-  name: string;
+  _id: string;
+  foodName: string;
   price: number;
-  description: string;
-  imageURL: string;
+  ingredients: string;
+  image: string;
+  category: string;
+  updatedAt: Date;
+  createdAt: Date;
+  __v: number;
 };
 
 export const categories: Category[] = [

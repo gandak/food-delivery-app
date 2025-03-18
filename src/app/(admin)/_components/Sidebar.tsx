@@ -12,7 +12,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className="w-[205px] flex gap-8 flex-col bg-white h-screen items-center pt-12">
+    <div className="w-[205px] flex gap-8 flex-col bg-white items-center pt-12">
       <div className="flex items-center">
         <div className="w-[40px] h-[40px]">
           <Image alt="" src="/logo.svg" width={36} height={29} />
