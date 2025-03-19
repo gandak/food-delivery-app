@@ -101,7 +101,7 @@ export const FoodAdd = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-white text-black w-[397px] h-[342px] rounded-3xl border-2 border-dashed border-spacing border-[#EF4444] flex flex-col items-center justify-center">
+        <Button className="bg-white text-black w-[350px] h-[350px] rounded-3xl border-2 border-dashed border-spacing border-[#EF4444] flex flex-col items-center justify-center">
           <div className="bg-[#EF4444] h-[40px] w-[40px] rounded-3xl flex justify-center items-center ">
             <Plus color="#ffffff" />
           </div>

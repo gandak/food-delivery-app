@@ -28,17 +28,23 @@ export const FoodSection = () => {
       {categories?.map((category: categoryType, index: number) => {
         return (
           <div key={index} className="bg-white p-6 mb-8 flex flex-col gap-4">
-            <h2>{category?.categoryName}</h2>
+            <h2 key={category._id}>{category?.categoryName}</h2>
 
             <div className="flex flex-wrap gap-8">
               <FoodAdd categoryName={category.categoryName} id={category._id} />
 
               {foods
-                .map((food: Foods, index: number) => (
-                  <div key={index}>
-                    <FoodGenerator food={food} />
-                  </div>
-                ))
+                .filter((food: Foods) => food.category._id === category._id)
+                .map((food: Foods, index: number) => {
+                  return (
+                    <FoodGenerator
+                      food={food}
+                      index={index}
+                      category={category.categoryName}
+                      categoryId={category._id}
+                    />
+                  );
+                })
                 .slice(0, 5)}
             </div>
           </div>

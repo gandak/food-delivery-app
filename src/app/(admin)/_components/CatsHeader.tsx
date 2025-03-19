@@ -23,9 +23,7 @@ import { getFoods } from "@/util/getFoods";
 import { Foods } from "@/util/database";
 
 type categoryType = {
-  category: {
-    categoryName: string;
-  };
+  categoryName: string;
   createdAt: Date;
   updatedAt: Date;
   _id: string;
@@ -129,8 +127,6 @@ export const CatsHeader = () => {
     setSaveId(id);
   };
 
-  console.log(foods);
-
   const countFoodsInCategories = () => {
     const count: { [key: string]: number } = {};
 
@@ -148,8 +144,6 @@ export const CatsHeader = () => {
       countFoodsInCategories();
     }
   }, [categories, foods]);
-
-  console.log(foodCount);
 
   return (
     <div className="bg-white p-6 rounded-lg ">
