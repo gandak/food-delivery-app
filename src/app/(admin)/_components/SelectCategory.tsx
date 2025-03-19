@@ -22,13 +22,10 @@ export const SelectCategory = ({
   useEffect(() => {
     const getAllCategories = async () => {
       const getAllCategories = await getCategories();
-      console.log(getAllCategories);
       setCategories(getAllCategories.allCategories);
     };
     getAllCategories();
   }, []);
-
-  console.log(categories);
 
   return (
     <Select>

@@ -20,7 +20,7 @@ import { Plus } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Input } from "@/components/ui/input";
 import { getFoods } from "@/util/getFoods";
-import { Foods } from "@/util/database";
+import { Foods } from "@/util/types";
 
 type categoryType = {
   categoryName: string;

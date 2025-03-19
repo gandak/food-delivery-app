@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { Foods } from "@/util/database";
+import { Foods } from "@/util/types";
 import { EditFood } from "../(admin)/_components/EditFood";
 
 export const FoodGenerator = ({
@@ -9,11 +9,13 @@ export const FoodGenerator = ({
   index,
   category,
   categoryId,
+  foodId,
 }: {
   food: Foods;
   index: number;
   category: string;
   categoryId: string;
+  foodId: string;
 }) => {
   const ingredients = food.ingredients.substring(0, 100);
   const foodName = food.foodName.substring(0, 40);
@@ -31,6 +33,7 @@ export const FoodGenerator = ({
             ingredients={food.ingredients}
             price={food.price}
             image={food.image}
+            foodId={foodId}
           />
           <Image alt="" src={food.image} width={300} height={0}></Image>
         </div>

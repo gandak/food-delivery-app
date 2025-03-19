@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Pen } from "lucide-react";
+import { CircleX, Pen, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,8 @@ import {
 import { SelectCategory } from "./SelectCategory";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { CloudinaryUpload } from "@/app/uploader/_components/CloudinaryUpload";
+import { imageUpload } from "@/util/imageUpload";
 
 const formSchema = z.object({
   dishname: z.string().min(3, {
@@ -39,9 +41,7 @@ const formSchema = z.object({
   ingredients: z.string().min(3, {
     message: "Ingredients must be at least 3 characters.",
   }),
-  price: z.number().min(3, {
-    message: "Ingredients must be at least 1 characters.",
-  }),
+  price: z.number(),
   image: z.string().min(3, {
     message: "Ingredients must be at least 3 characters.",
   }),
@@ -54,6 +54,7 @@ export const EditFood = ({
   ingredients,
   price,
   image,
+  foodId,
 }: {
   foodName: string;
   category: string;
@@ -61,27 +62,79 @@ export const EditFood = ({
   ingredients: string;
   price: number;
   image: string;
+  foodId: string;
 }) => {
-  console.log(category);
+  const [imagePrev, setImagePrev] = useState<string>(image);
+  const [file, setFile] = useState<File | null>();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       dishname: "",
+      category: "",
+      ingredients: "",
+      price: 0,
+      image: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  form.setValue("dishname", foodName);
+  form.setValue("category", category);
+  form.setValue("price", Number(price));
+  form.setValue("ingredients", ingredients);
+  form.setValue("image", image);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!file) {
+      alert("Зурагаа сонгоогүй байна");
+      return;
+    }
+
+    try {
+      const imageUrl = await imageUpload(file);
+      form.setValue("image", imageUrl);
+
+      console.log(foodId);
+
+      console.log(imageUrl);
+
+      const response = await fetch(`http://localhost:4000/food/${foodId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          foodName: values.dishname,
+          price: values.price,
+          image: values.image,
+          ingredients: values.ingredients,
+          category: categoryId,
+        }),
+      });
+
+      const jsonData = await response.json();
+
+      console.log(jsonData);
+      console.log("Server Response:", jsonData);
+      alert("Food added successfully!");
+    } catch (error) {}
+
     console.log(values);
   }
 
-  form.setValue("dishname", foodName);
-  form.setValue("category", category);
-  form.setValue("price", price);
-  form.setValue("ingredients", ingredients);
-  form.setValue("image", image);
+  const deleteImage = () => {
+    const emptyPrev = "";
+    setImagePrev(emptyPrev);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+
+      const imgPreview = URL.createObjectURL(e.target.files[0]);
+      setImagePrev(imgPreview);
+    } else setFile(null);
+  };
 
   return (
     <Dialog>
@@ -163,7 +216,7 @@ export const EditFood = ({
                       Price
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input type="number" {...field} />
                     </FormControl>
                     <FormDescription></FormDescription>
                     <FormMessage />
@@ -179,12 +232,31 @@ export const EditFood = ({
                       Image
                     </FormLabel>
                     <FormControl>
-                      <Image
-                        alt=""
-                        src={image}
-                        width={240}
-                        height={100}
-                      ></Image>
+                      {imagePrev ? (
+                        <div className="relative">
+                          <Button
+                            className="bg-white w-[36px] h-[36px] z-20 absolute right-3 top-2 rounded-full flex justify-center items-center"
+                            onClick={deleteImage}
+                          >
+                            <X color="black" />
+                          </Button>
+                          <Image
+                            alt=""
+                            src={imagePrev}
+                            width={240}
+                            height={100}
+                          ></Image>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-4 items-center">
+                          <Input
+                            id="picture"
+                            type="file"
+                            onChange={handleChange}
+                            accept="image/*"
+                          />
+                        </div>
+                      )}
                     </FormControl>
                     <FormDescription></FormDescription>
                     <FormMessage />
@@ -217,3 +289,6 @@ export const EditFood = ({
     </Dialog>
   );
 };
+function setImagePrev() {
+  throw new Error("Function not implemented.");
+}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FoodAdd } from "./FoodAdd";
 import { FoodGenerator } from "@/app/_components/FoodGenerator";
-import { Foods, foods } from "@/util/database";
+import { Foods } from "@/util/types";
 import { getCategories } from "@/util/getCategories";
-import categoryType from "@/util/types";
+import { categoryType } from "@/util/types";
 import { getFoods } from "@/util/getFoods";
 
 export const FoodSection = () => {
@@ -30,7 +30,7 @@ export const FoodSection = () => {
           <div key={index} className="bg-white p-6 mb-8 flex flex-col gap-4">
             <h2 key={category._id}>{category?.categoryName}</h2>
 
-            <div className="flex flex-wrap gap-8">
+            <div key={index} className="flex flex-wrap gap-8">
               <FoodAdd categoryName={category.categoryName} id={category._id} />
 
               {foods
@@ -42,6 +42,7 @@ export const FoodSection = () => {
                       index={index}
                       category={category.categoryName}
                       categoryId={category._id}
+                      foodId={food._id}
                     />
                   );
                 })
