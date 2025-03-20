@@ -2,7 +2,12 @@
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import React, { ChangeEventHandler } from "react";
+import React, {
+  ChangeEventHandler,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -25,11 +30,15 @@ const formSchema = z.object({
 });
 
 export const StepOne = ({
-  inputHandler,
+
   currentStep,
+  setEmail,
+  email,
 }: {
-  inputHandler: ChangeEventHandler<HTMLInputElement>;
+
   currentStep: number;
+  setEmail: Dispatch<SetStateAction<string>>;
+  email: string;
 }) => {
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -40,6 +49,7 @@ export const StepOne = ({
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setEmail(values.email);
     router.push(`?step=${currentStep + 1}`);
   }
 

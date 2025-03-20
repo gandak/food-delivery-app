@@ -7,7 +7,7 @@ type Props = {
 
 const AuthImage = (props: Props) => {
   return (
-    <div className="flex w-screen min-h-100vh justify-between gap-8">
+    <div className="flex w-screen min-h-100vh justify-between gap-8 bg-white">
       <div className="w-full flex justify-center items-center">
         {props.children}
       </div>

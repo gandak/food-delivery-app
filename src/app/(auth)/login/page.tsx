@@ -2,10 +2,10 @@
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { boolean, z } from "zod";
 import {
   Form,
   FormControl,
@@ -16,6 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { loginUser } from "@/util/loginUser";
+import { useRouter } from "next/router";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -25,6 +27,7 @@ const formSchema = z.object({
 });
 
 const loginPage = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,7 +36,16 @@ const loginPage = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {}
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const loginInfo = await loginUser(values);
+    // console.log(loginInfo);
+    if (!loginInfo.email) {
+      alert(loginInfo.message);
+    }
+
+    localStorage.setItem("loggedUserEmail", loginInfo.email);
+    setIsLoggedIn(true);
+  }
 
   const inputHandler: React.ChangeEventHandler<HTMLInputElement> = (e: any) => {
     console.log(e.target.value);

@@ -15,6 +15,7 @@ type userType = {
 const Page = () => {
   const searchParams = useSearchParams();
   const [step, setStep] = useState<number>(0);
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
     const getStep = parseInt(searchParams.get("step") || "0", 10);
@@ -35,8 +36,10 @@ const Page = () => {
     <div className=" w-[416px] flex flex-col gap-4 justify-center">
       <FormSteps
         currentStep={step}
+        setEmail={setEmail}
+        email={email}
         // value={userInfo}
-        inputHandler={inputHandler}
+
         // error={errorMessage}
       />
     </div>

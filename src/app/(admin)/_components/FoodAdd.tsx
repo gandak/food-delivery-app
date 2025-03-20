@@ -161,7 +161,7 @@ export const FoodAdd = ({
               control={form.control}
               name="image"
               render={({ field }) => (
-                <FormItem className="flex flex-col gap-4">
+                <FormItem className="flex flex-col">
                   <FormLabel></FormLabel>
                   <FormControl>
                     <CloudinaryUpload setFile={setFile} setImage={setImage} />

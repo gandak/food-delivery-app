@@ -2,7 +2,12 @@
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import React, { ChangeEventHandler, useState } from "react";
+import React, {
+  ChangeEventHandler,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
+import { addUser } from "@/util/addUser";
 
 const formSchema = z
   .object({
@@ -34,6 +40,7 @@ const formSchema = z
         message: "Password must include at least one number.",
       }),
     confirm: z.string(),
+    email: z.string(),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Passwords don't match",
@@ -41,11 +48,13 @@ const formSchema = z
   });
 
 export const StepTwo = ({
-  inputHandler,
   currentStep,
+  setEmail,
+  email,
 }: {
-  inputHandler: ChangeEventHandler<HTMLInputElement>;
   currentStep: number;
+  setEmail: Dispatch<SetStateAction<string>>;
+  email: string;
 }) => {
   const [isView, setIsView] = useState(false);
   const router = useRouter();
@@ -53,25 +62,31 @@ export const StepTwo = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      email: email,
       password: "",
       confirm: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+    try {
+      await addUser(values);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while adding user. Try again");
+    }
     router.push(`?step=${currentStep + 1}`);
   }
-
-  const checkValue = () => {};
 
   const goBack = () => {
     router.push(`?step=${currentStep - 1}`);
   };
 
   const showHidePass = () => {
-    console.log("worj");
     setIsView(!isView);
   };
+
   return (
     <Form {...form}>
       <Button

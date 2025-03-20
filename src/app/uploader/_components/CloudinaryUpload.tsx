@@ -1,4 +1,5 @@
 "use client";
+import { Input } from "@/components/ui/input";
 import React from "react";
 
 export const CloudinaryUpload: React.FC<{
@@ -15,8 +16,14 @@ export const CloudinaryUpload: React.FC<{
   };
 
   return (
-    <div className="flex flex-col gap-4 items-center">
-      <input type="file" onChange={handleChange} accept="image/*" />
+    <div className="flex flex-col gap-4">
+      <h2>Food image</h2>
+      <Input
+        id="picture"
+        type="file"
+        onChange={handleChange}
+        accept="image/*"
+      />
     </div>
   );
 };
