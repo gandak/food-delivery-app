@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -71,13 +71,6 @@ const loginPage = () => {
 
     localStorage.setItem("loggedUserEmail", loginInfo.email);
   }
-
-  const inputHandler: React.ChangeEventHandler<HTMLInputElement> = (e: any) => {
-    console.log(e.target.value);
-    // userInfo?[e.target.name] = e.target.value;
-    // setUserInfo({ ...userInfo });
-  };
-  const checkValue = () => {};
 
   return (
     <div className="w-[416px]">

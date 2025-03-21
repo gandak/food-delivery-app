@@ -20,9 +20,6 @@ export const HomeSectionGenerator = ({
     getData();
   }, []);
 
-  console.log("foods: ", foods);
-  console.log("category: ", category);
-
   return (
     <div>
       <h2 className="text-white font-semibold text-[30px]">

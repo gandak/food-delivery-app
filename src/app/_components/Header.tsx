@@ -20,10 +20,12 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export const Header = ({ loggedUser }: { loggedUser: string }) => {
+export const Header = () => {
   const router = useRouter();
+  const loggedUser = localStorage.getItem("loggedUserEmail");
   const signOut = () => {
     localStorage.removeItem("loggedUserEmail");
+    router.push("/login");
   };
   return (
     <div className="bg-black w-full py-2">
