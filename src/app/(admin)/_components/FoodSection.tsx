@@ -5,23 +5,16 @@ import { Foods } from "@/util/types";
 import { getCategories } from "@/util/getCategories";
 import { categoryType } from "@/util/types";
 import { getFoods } from "@/util/getFoods";
+import { useFoods } from "@/app/_context/FoodContext";
+import { useCategories } from "@/app/_context/CategoryContext";
 
 export const FoodSection = () => {
-  const [categories, setCategories] = useState<[]>([]);
-  const [foods, setFoods] = useState<[]>([]);
+  const { foods } = useFoods();
+  const { categories } = useCategories();
 
-  useEffect(() => {
-    const getData = async () => {
-      const categories = await getCategories();
-      const foods = await getFoods();
-
-      setCategories(categories.allCategories);
-      setFoods(foods.allFood);
-    };
-    getData();
-  }, []);
-  // console.log(foods);
-  // console.log(categories);
+  if (!foods) {
+    return;
+  }
 
   return (
     <div>

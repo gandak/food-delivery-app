@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { FoodProvider } from "./_context/FoodContext";
+import { CategoriesProvider } from "./_context/CategoryContext";
 
 const geistInter = Inter({
   variable: "--font-inter-sans",
@@ -22,7 +24,9 @@ export default function RootLayout({
       <body
         className={`${geistInter.variable} ${geistInter.variable} antialiased bg-[#404040]`}
       >
-        {children}
+        <CategoriesProvider>
+          <FoodProvider>{children}</FoodProvider>
+        </CategoriesProvider>
       </body>
     </html>
   );

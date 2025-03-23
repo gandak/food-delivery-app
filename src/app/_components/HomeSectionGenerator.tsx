@@ -1,24 +1,19 @@
 "use client";
-import { getFoods } from "@/util/getFoods";
 import { categoryType, Foods } from "@/util/types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FoodGenerator } from "./FoodGenerator";
+import { useFoods } from "../_context/FoodContext";
 
 export const HomeSectionGenerator = ({
   category,
 }: {
   category: categoryType;
 }) => {
-  const [foods, setFoods] = useState<[]>([]);
+  const { foods, setFoods } = useFoods();
 
-  useEffect(() => {
-    const getData = async () => {
-      const foods = await getFoods();
-
-      setFoods(foods.allFood);
-    };
-    getData();
-  }, []);
+  if (!foods) {
+    return;
+  }
 
   return (
     <div>
@@ -46,3 +41,6 @@ export const HomeSectionGenerator = ({
     </div>
   );
 };
+function useFood(): { foods: any; setFoods: any } {
+  throw new Error("Function not implemented.");
+}
